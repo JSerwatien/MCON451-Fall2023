@@ -350,6 +350,7 @@
     <Content Include="BlankTemplate\pages\virtual-reality.html" />
     <Content Include="BlankTemplate\template.html" />
     <Content Include="Notes.txt" />
+    <Content Include="Scripts.sql" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
