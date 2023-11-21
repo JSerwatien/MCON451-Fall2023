@@ -23,8 +23,8 @@ namespace MCON451.Data.Code
                 returnData.TotalSalesYTD = Convert.ToDecimal(ds.Tables[1].Rows[0]["S"]);
                 returnData.StoreTotal = new(){ DecimalValue = Convert.ToDecimal(ds.Tables[2].Rows[0]["S"]), StringValue= ds.Tables[2].Rows[0]["StoreName"].ToString() };
                 returnData.RepTotal = new(){ DecimalValue = Convert.ToDecimal(ds.Tables[3].Rows[0]["S"]), StringValue= ds.Tables[3].Rows[0]["RepName"].ToString() };
-                returnData.MonthlySales = LoadStringIntDoubleEntityList(ds.Tables[4], string.Empty, "S", "M"); 
-                returnData.MonthlySalesByStore   = LoadStringIntDoubleEntityList(ds.Tables[5], "StoreName", "S", "M"); 
+                returnData.MonthlySales = LoadStringIntDoubleDateEntityList(ds.Tables[4], string.Empty, "S", string.Empty, "M"); 
+                returnData.MonthlySalesByStore   = LoadStringIntDoubleDateEntityList(ds.Tables[5], "StoreName", "S", string.Empty, "M"); 
                 returnData.SalesByChain = LoadStringIntDoubleEntityList(ds.Tables[6], "ChainName", "S", string.Empty); 
                 returnData.CampaignSummaryList = LoadCampaignSummaryList(ds.Tables[7]);
                 returnData.CampaignTimeline = LoadCampaignTimeline(ds.Tables[8]);
@@ -78,12 +78,26 @@ namespace MCON451.Data.Code
         private static List<StringIntDoubleEntity> LoadStringIntDoubleEntityList(DataTable dataTable, string stringValueField, string decimalValueField, string intValueField)
         {
             List<StringIntDoubleEntity> returnData = new();
-            foreach(DataRow newRow in dataTable.Rows)
+            foreach (DataRow newRow in dataTable.Rows)
             {
                 StringIntDoubleEntity newItem = new();
                 if (!string.IsNullOrEmpty(stringValueField)) { newItem.StringValue = newRow[stringValueField].ToString(); }
                 if (!string.IsNullOrEmpty(decimalValueField)) { newItem.DecimalValue = Convert.ToDecimal(newRow[decimalValueField]); }
                 if (!string.IsNullOrEmpty(intValueField)) { newItem.IntValue = Convert.ToInt32(newRow[intValueField]); }
+                returnData.Add(newItem);
+            }
+            return returnData;
+        }
+        private static List<StringIntDoubleDateEntity> LoadStringIntDoubleDateEntityList(DataTable dataTable, string stringValueField, string decimalValueField, string intValueField, string dateValueField)
+        {
+            List<StringIntDoubleDateEntity> returnData = new();
+            foreach (DataRow newRow in dataTable.Rows)
+            {
+                StringIntDoubleDateEntity newItem = new();
+                if (!string.IsNullOrEmpty(stringValueField)) { newItem.StringValue = newRow[stringValueField].ToString(); }
+                if (!string.IsNullOrEmpty(decimalValueField)) { newItem.DecimalValue = Convert.ToDecimal(newRow[decimalValueField]); }
+                if (!string.IsNullOrEmpty(intValueField)) { newItem.IntValue = Convert.ToInt32(newRow[intValueField]); }
+                if (!string.IsNullOrEmpty(dateValueField)) { newItem.DateValue= Convert.ToDateTime(newRow[dateValueField]); }
                 returnData.Add(newItem);
             }
             return returnData;

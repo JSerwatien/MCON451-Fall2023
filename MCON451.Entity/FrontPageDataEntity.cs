@@ -12,9 +12,9 @@
         //TOP SALES REP SUM
         public StringIntDoubleEntity RepTotal { get; set; }
         //Total Monthly Sales (line chart)
-        public List<StringIntDoubleEntity> MonthlySales { get; set; }
+        public List<StringIntDoubleDateEntity> MonthlySales { get; set; }
         //Total Store Sales (line chart)
-        public List<StringIntDoubleEntity> MonthlySalesByStore { get; set; }
+        public List<StringIntDoubleDateEntity> MonthlySalesByStore { get; set; }
         //Total Chain Sales (donut chart)
         public List<StringIntDoubleEntity> SalesByChain { get; set; }
         //Campaign, How many reps sold for each, Total Sales for each, Total % (include NULLS)
