@@ -1,7 +1,20 @@
 ﻿@page "/"
 @using MCON451.Entity
 @using System.Globalization
-
+@if (!string.IsNullOrEmpty(PageModel?.PageMessage))
+{
+    <div class="alert alert-success" role="alert" style="color:white">
+        @((MarkupString)PageModel.PageMessage)
+    </div>
+        <br />
+}
+@if (PageModel?.ErrorObject != null)
+{
+    <div class="alert alert-danger" role="alert" style="color:white">
+        @((MarkupString)PageModel.ErrorObject.Message)
+    </div>
+    <br />
+}
 <div class="row">
     <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
         <div class="card">
@@ -95,10 +108,10 @@
             <div class="card-body" style="height:70px">
                 <h6 class="mb-0 ">Monthly Sales</h6>
                 <p class="text-sm ">All Stores</p>
-               @* <hr class="dark horizontal">*@
-@*                <div class="d-flex ">
-                    <i class="material-icons text-sm my-auto me-1">schedule</i>
-                    <p class="mb-0 text-sm"> campaign sent 2 days ago </p>
+                @* <hr class="dark horizontal">*@
+                @*                <div class="d-flex ">
+                <i class="material-icons text-sm my-auto me-1">schedule</i>
+                <p class="mb-0 text-sm"> campaign sent 2 days ago </p>
                 </div>*@
             </div>
         </div>
@@ -109,15 +122,18 @@
                 <div class="bg-gradient-success shadow-success border-radius-lg py-3 pe-1">
                     <div class="chart" style="color:white !important">
                         <RadzenChart Style="height:250px; --rz-chart-axis-label-color: white">
-                            @foreach(string newItem in PageModel.MonthlySalesByStore.Select(x => x.StringValue).Distinct().ToList())
+                            @if (PageModel.MonthlySalesByStore != null)
                             {
-                                <RadzenLineSeries Smooth="true" Data="@PageModel.MonthlySalesByStore.Where(x => x.StringValue==newItem && x.IntValue<13)" CategoryProperty="DateValue" Title="@newItem" LineType="LineType.Dashed" ValueProperty="DecimalValue">
-                                    <RadzenMarkers MarkerType="MarkerType.Square" />
-                                    <RadzenSeriesDataLabels Visible="@false"  />
-                                </RadzenLineSeries>
+                                @foreach (string newItem in PageModel.MonthlySalesByStore.Select(x => x.StringValue).Distinct().ToList())
+                                {
+                                    <RadzenLineSeries Smooth="true" Data="@PageModel.MonthlySalesByStore.Where(x => x.StringValue==newItem && x.IntValue<13)" CategoryProperty="DateValue" Title="@newItem" LineType="LineType.Dashed" ValueProperty="DecimalValue">
+                                        <RadzenMarkers MarkerType="MarkerType.Square" />
+                                        <RadzenSeriesDataLabels Visible="@false" />
+                                    </RadzenLineSeries>
+                                }
                             }
                             <RadzenCategoryAxis Padding="10" Formatter="@FormatAsDate" />
-                            <RadzenLegend Visible="false" Position="LegendPosition.Bottom"/>
+                            <RadzenLegend Visible="false" Position="LegendPosition.Bottom" />
                             <RadzenValueAxis Formatter="@FormatAsUSD" Visible="true">
                                 <RadzenGridLines Visible="true" />
                                 <RadzenAxisTitle Text="Revenue in USD" />
@@ -127,7 +143,12 @@
                 </div>
             </div>
             <div class="card-body" style="height:70px">
-                <p class="text-sm "> (<span class="font-weight-bolder">Top 5 Stores</span>) @String.Join(",", PageModel.MonthlySalesByStore.Select(x => x.StringValue).Distinct().ToList()). </p>
+                <p class="text-sm ">
+                    @if (PageModel != null && PageModel.MonthlySalesByStore != null)
+                    {
+                        <span class="font-weight-bolder">Top 5 Stores: </span> @GetMonthlySalesByStoreName()
+                    }
+                </p>
                 <hr class="dark horizontal">
             </div>
         </div>
@@ -141,16 +162,16 @@
                             <RadzenDonutSeries Data="@PageModel.SalesByChain.ToList()" CategoryProperty="StringValue" ValueProperty="DecimalValue">
                                 <ChildContent>
                                     <RadzenSeriesDataLabels Visible="true" />
-                                    
+
                                 </ChildContent>
-@*                                <TitleTemplate>
-                                    <div class="rz-donut-content">
-                                        <div style="color:white">Sales By</div>
-                                        <div style="color:white">Chain</div>
-                                    </div>
+                                @*                                <TitleTemplate>
+                                <div class="rz-donut-content">
+                                <div style="color:white">Sales By</div>
+                                <div style="color:white">Chain</div>
+                                </div>
                                 </TitleTemplate>*@
                             </RadzenDonutSeries>
-                            <RadzenValueAxis  Formatter="@FormatAsUSD" />
+                            <RadzenValueAxis Formatter="@FormatAsUSD" />
                         </RadzenChart>
                     </div>
                 </div>
@@ -176,11 +197,10 @@
                         <h6>Campaigns</h6>
                         <p class="text-sm mb-0">
                             <i class="fa fa-check text-info" aria-hidden="true"></i>
-                            <span class="font-weight-bold ms-1">@PageModel.CampaignSummaryList.Count </span> active campaigns
+                            <span class="font-weight-bold ms-1">@PageModel.CampaignSummaryList != null ? PageModel.CampaignSummaryList.Count : 0 </span> active campaigns
                         </p>
                     </div>
                     <div class="col-lg-6 col-5 my-auto text-end">
-                        
                     </div>
                 </div>
             </div>
@@ -196,34 +216,37 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach(CampaignSummaryEntity newItem in PageModel.CampaignSummaryList)
+                            @if (PageModel.CampaignSummaryList != null)
                             {
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <i class="material-icons text-success text-default text-gradient">@newItem.Icon</i>
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm" style="margin-left:10px"> @newItem.Campaign (@newItem.CampaignKey)</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>@newItem.RepCount</td>
-                                    <td>@newItem.TheSum.ToString("c")</td>
-                                    <td class="align-middle">
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <div class="progress-info">
-                                                <div class="progress-percentage">
-                                                    <span class="text-xs font-weight-bold">@newItem.TotalPercentage%</span>
+                                @foreach (CampaignSummaryEntity newItem in PageModel.CampaignSummaryList)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div>
+                                                    <i class="material-icons text-success text-default text-gradient">@newItem.Icon</i>
+                                                </div>
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm" style="margin-left:10px"> @newItem.Campaign (@newItem.CampaignKey)</h6>
                                                 </div>
                                             </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-info w-@newItem.TotalPercentage" role="progressbar" aria-valuenow="@newItem.TotalPercentage" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </td>
+                                        <td>@newItem.RepCount</td>
+                                        <td>@newItem.TheSum.ToString("c")</td>
+                                        <td class="align-middle">
+                                            <div class="progress-wrapper w-75 mx-auto">
+                                                <div class="progress-info">
+                                                    <div class="progress-percentage">
+                                                        <span class="text-xs font-weight-bold">@newItem.TotalPercentage%</span>
+                                                    </div>
+                                                </div>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-gradient-info w-@newItem.TotalPercentage" role="progressbar" aria-valuenow="@newItem.TotalPercentage" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
@@ -242,17 +265,20 @@
             </div>
             <div class="card-body p-3">
                 <div class="timeline timeline-one-side">
-                    @foreach(CampaignTimelineEntity newItem in PageModel.CampaignTimeline)
+                    @if (PageModel.CampaignTimeline != null)
                     {
-                        <div class="timeline-block mb-3">
-                            <span class="timeline-step">
-                                <i class="material-icons text-success text-gradient">@newItem.Icon</i>
-                            </span>
-                            <div class="timeline-content">
-                                <h6 class="text-dark text-sm font-weight-bold mb-0">@newItem.TheSum.ToString("c"), @newItem.Description</h6>
-                                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">From: @newItem.FromDate.ToString("yyyy-MM-dd") - Thru: @newItem.ThruDate.ToString("yyyy-MM-dd")</p>
+                        @foreach (CampaignTimelineEntity newItem in PageModel.CampaignTimeline)
+                        {
+                            <div class="timeline-block mb-3">
+                                <span class="timeline-step">
+                                    <i class="material-icons text-success text-gradient">@newItem.Icon</i>
+                                </span>
+                                <div class="timeline-content">
+                                    <h6 class="text-dark text-sm font-weight-bold mb-0">@newItem.TheSum.ToString("c"), @newItem.Description</h6>
+                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">From: @newItem.FromDate.ToString("yyyy-MM-dd") - Thru: @newItem.ThruDate.ToString("yyyy-MM-dd")</p>
+                                </div>
                             </div>
-                        </div>
+                        }
                     }
                 </div>
             </div>
@@ -260,8 +286,8 @@
     </div>
 </div>
 
-@code{
-    private FrontPageDataEntity PageModel =new();
+@code {
+    private FrontPageDataEntity PageModel = new();
     protected override void OnInitialized()
     {
         ReloadModel();
@@ -293,5 +319,9 @@
         }
 
         return string.Empty;
+    }
+    private string GetMonthlySalesByStoreName()
+    {
+        return PageModel.MonthlySalesByStore != null ? String.Join(",", PageModel.MonthlySalesByStore.Select(x => x.StringValue).Distinct().ToList()) : string.Empty;
     }
 }

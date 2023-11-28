@@ -22,5 +22,6 @@
         //Campaign, dates, total sales
         public List<CampaignTimelineEntity> CampaignTimeline { get; set; }
         public Exception ErrorObject { get; set; }
+        public string PageMessage { get; set; }
     }
 }
