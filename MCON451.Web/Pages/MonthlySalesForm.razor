@@ -1,0 +1,44 @@
+﻿@page "/MonthlySalesForm"
+@using MCON451.Entity
+<div class="row">
+    <div class="col-md-6">
+        <b>Sales Rep</b><br />
+        <RadzenDropDown AllowFiltering=true FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" @bind-Value=@PageModel.StoreSalesRepresentativeKey Data=@PageModel.ListOfReps TextProperty="StringValue" ValueProperty="IntValue" class="form-control" />
+    </div>
+    <div class="col-md-6">
+        <b>Campaign</b><br />
+        <RadzenDropDown AllowFiltering=true FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains" @bind-Value=@PageModel.CampaignKey Data=@PageModel.ListOfCampaigns TextProperty="StringValue" ValueProperty="IntValue" class="form-control" />
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-4">
+        <b>Sales Month</b><br />
+        <RadzenNumeric Min="1" Max="12" Placeholder="@DateTime.Now.AddYears(0).Month.ToString()" @bind-Value=@PageModel.SalesMonth class="form-control" />
+    </div>
+    <div class="col-md-4">
+        <b>Sales Year</b>        <br />
+        <RadzenNumeric Min="2020" Placeholder="@DateTime.Now.AddYears(0).Year.ToString()" Max="@DateTime.Now.AddYears(1).Year" @bind-Value=@PageModel.SalesYear class="form-control" />
+    </div>
+    <div class="col-md-4">
+        <b>Sales Amount</b> <br />
+        <RadzenNumeric TValue="decimal" Placeholder="0.0" @bind-Value=@PageModel.SalesAmount class="form-control" />
+    </div>
+</div>
+<br />
+<RadzenButton Click=@(args => SaveSales()) Text="Save Sales" style="float:right"  Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
+@code {
+    private MonthlySalesFormEntity PageModel = new();
+    protected override void OnInitialized()
+    {
+        ReloadModel();
+    }
+    private void ReloadModel()
+    {
+        PageModel = MCON451.Data.Code.MonthlySalesFormFactory.GetFormData();
+    }
+    private void SaveSales()
+    {
+        
+    }
+}

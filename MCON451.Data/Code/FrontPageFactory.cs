@@ -28,7 +28,7 @@ namespace MCON451.Data.Code
                 returnData.SalesByChain = LoadStringIntDoubleEntityList(ds.Tables[6], "ChainName", "S", string.Empty); 
                 returnData.CampaignSummaryList = LoadCampaignSummaryList(ds.Tables[7]);
                 returnData.CampaignTimeline = LoadCampaignTimeline(ds.Tables[8]);
-                //returnData.PageMessage = "Your data was loaded successfully!";
+                //returnData.PageMessage = "Your data was loaded <b>successfully!</b>";
                 //returnData.ErrorObject = new Exception("There was some kind of error");
             }
             catch (Exception ex)
