@@ -1,5 +1,20 @@
 ﻿@page "/MonthlySalesForm"
 @using MCON451.Entity
+
+@if (!string.IsNullOrEmpty(PageModel?.PageMessage))
+{
+    <div class="alert alert-success" role="alert" style="color:white">
+        @((MarkupString)PageModel.PageMessage)
+    </div>
+    <br />
+}
+@if (PageModel?.ErrorObject != null)
+{
+    <div class="alert alert-danger" role="alert" style="color:white">
+        @((MarkupString)PageModel.ErrorObject.Message)
+    </div>
+    <br />
+}
 <div class="row">
     <div class="col-md-6">
         <b>Sales Rep</b><br />
@@ -22,7 +37,7 @@
     </div>
     <div class="col-md-4">
         <b>Sales Amount</b> <br />
-        <RadzenNumeric TValue="decimal" Placeholder="0.0" @bind-Value=@PageModel.SalesAmount class="form-control" />
+        <RadzenNumeric TValue="decimal" Placeholder="0.00" @bind-Value=@PageModel.SalesAmount class="form-control" Format="c" />
     </div>
 </div>
 <br />
@@ -39,6 +54,29 @@
     }
     private void SaveSales()
     {
-        
+        string pageMessage;
+        if(ValidateInput())
+        {
+            PageModel.ErrorObject = null;
+            PageModel = MCON451.Data.Code.MonthlySalesFormFactory.SaveMonthlySales(PageModel);
+        }
+        if(PageModel.ErrorObject ==null)
+        {
+            pageMessage = PageModel.PageMessage;
+            PageModel = new();
+            PageModel.PageMessage = pageMessage;
+        }
+    }
+    private bool ValidateInput()
+    {
+        if(PageModel.StoreSalesRepresentativeKey==0)
+        { PageModel.ErrorObject = new("The Sales Rep is a required field"); return false; }
+        else if (PageModel.SalesAmount <= 0)
+        { PageModel.ErrorObject = new("The Sales Amount must be a positive number"); return false; }
+        else if (PageModel.SalesMonth == 0)
+        { PageModel.ErrorObject = new("The Sales Month is invalid"); return false; }
+        else if (PageModel.SalesYear == 0)
+        { PageModel.ErrorObject = new("The Sales Year is invalid"); return false; }
+        return true;
     }
 }

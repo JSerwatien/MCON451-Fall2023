@@ -53,5 +53,24 @@ namespace MCON451.Data.Code
             }
             return returnData;
         }
+        public static MonthlySalesFormEntity SaveMonthlySales(MonthlySalesFormEntity theSales)
+        {
+            string strSQL = "EXEC dbo.MonthlySalesForm_InsUpt {0},{1},{2},{3},{4},{5}";
+            DataSet ds = new();
+            try
+            {
+                strSQL = string.Format(strSQL, theSales.MonthlySalesKey, theSales.StoreSalesRepresentativeKey, 
+                            theSales.SalesMonth, theSales.SalesYear, theSales.CampaignKey >0 ? theSales.CampaignKey : "NULL", 
+                            theSales.SalesAmount);
+                ds = DataFactory.GetDataSet(strSQL, "SavedSales");
+                theSales.MonthlySalesKey = Convert.ToInt32(ds.Tables[0].Rows[0][0]);
+                theSales.PageMessage = "Your sales amount was saved successfully with ID " + theSales.MonthlySalesKey +"!";
+            }
+            catch (Exception ex)
+            {
+                theSales.ErrorObject = ex;
+            }
+            return theSales;
+        }
     }
 }

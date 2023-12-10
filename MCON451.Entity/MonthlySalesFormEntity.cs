@@ -8,6 +8,7 @@ namespace MCON451.Entity
 {
     public class MonthlySalesFormEntity
     {
+        public int MonthlySalesKey { get; set; }
         public int StoreSalesRepresentativeKey { get; set; } 
         public int SalesMonth { get; set; }
         public int SalesYear { get; set; }
@@ -17,5 +18,9 @@ namespace MCON451.Entity
         public List<StringIntDoubleEntity> ListOfCampaigns { get; set; }
         public Exception ErrorObject { get; set; }
         public string PageMessage { get; set; }
+        public string CreatedBy { get; set; }
+        public string LastUpdatedBy { get; set; }
+        public DateTime CreatedDateTime { get; set; }
+        public DateTime LastUpdatedDateTime { get; set; }
     }
 }

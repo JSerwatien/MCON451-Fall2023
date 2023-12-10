@@ -13,7 +13,7 @@ namespace MCON451.Data.Code
         public static FrontPageDataEntity LoadFrontPageData ()
         {
             FrontPageDataEntity returnData = new();
-            string strSQL = "EXEC FrontPageData_SEL";
+            string strSQL = "EXEC dbo.FrontPageData_SEL";
             DataSet ds = new();
             try
             {
