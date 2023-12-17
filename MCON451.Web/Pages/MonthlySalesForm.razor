@@ -1,4 +1,5 @@
 ﻿@page "/MonthlySalesForm"
+@page "/MonthlySalesForm/{MonthlySalesKey}"
 @using MCON451.Entity
 
 @if (!string.IsNullOrEmpty(PageModel?.PageMessage))
@@ -15,6 +16,7 @@
     </div>
     <br />
 }
+<h2>Monthly Sales ID: @GetMonthlySalesKey()</h2>
 <div class="row">
     <div class="col-md-6">
         <b>Sales Rep</b><br />
@@ -43,6 +45,8 @@
 <br />
 <RadzenButton Click=@(args => SaveSales()) Text="Save Sales" style="float:right"  Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
 @code {
+    [Parameter]
+    public string MonthlySalesKey { get; set; }
     private MonthlySalesFormEntity PageModel = new();
     protected override void OnInitialized()
     {
@@ -50,7 +54,7 @@
     }
     private void ReloadModel()
     {
-        PageModel = MCON451.Data.Code.MonthlySalesFormFactory.GetFormData();
+        PageModel = MCON451.Data.Code.MonthlySalesFormFactory.GetFormData(!string.IsNullOrEmpty(MonthlySalesKey) ? Convert.ToInt32(MonthlySalesKey) : 0);
     }
     private void SaveSales()
     {
@@ -78,5 +82,9 @@
         else if (PageModel.SalesYear == 0)
         { PageModel.ErrorObject = new("The Sales Year is invalid"); return false; }
         return true;
+    }
+    private string GetMonthlySalesKey()
+    {
+        return PageModel.MonthlySalesKey > 0 ? PageModel.MonthlySalesKey.ToString() : "UNSAVED";
     }
 }

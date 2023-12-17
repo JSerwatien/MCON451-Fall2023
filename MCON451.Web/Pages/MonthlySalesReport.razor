@@ -1,0 +1,52 @@
+﻿@page "/MonthlySalesReport"
+@using MCON451.Entity
+
+@if (!string.IsNullOrEmpty(PageModel?.PageMessage))
+{
+        <div class="alert alert-success" role="alert" style="color:white">
+        @((MarkupString)PageModel.PageMessage)
+        </div>
+        <br />
+}
+@if (PageModel?.ErrorObject != null)
+{
+        <div class="alert alert-danger" role="alert" style="color:white">
+        @((MarkupString)PageModel.ErrorObject.Message)
+        </div>
+        <br />
+}
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Advanced" 
+            AllowSorting="true" PageSize="15" AllowPaging="true" ShowPagingSummary="true" AllowColumnPicking="true"
+                Data="@PageModel.SalesData" TItem="MonthlySalesEntity" LogicalFilterOperator="LogicalFilterOperator.Or">
+    <Columns>
+        <RadzenDataGridColumn TItem="MonthlySalesEntity" Property="MonthlySalesKey" Title="ID">
+            <Template Context="data">
+                <a href="/MonthlySalesForm/@data.MonthlySalesKey">@data.MonthlySalesKey</a>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="MonthlySalesEntity" Property="SalesRepName" Title="Sales Rep"/>
+        <RadzenDataGridColumn TItem="MonthlySalesEntity" Property="StoreName" Title="Store Name" />
+        <RadzenDataGridColumn TItem="MonthlySalesEntity" Property="CampaignName" Title="Campaign" />
+        <RadzenDataGridColumn TItem="MonthlySalesEntity" Property="SalesMonth" Title="Month"/>
+        <RadzenDataGridColumn TItem="MonthlySalesEntity" Property="SalesYear" Title="Year" />
+        <RadzenDataGridColumn TItem="MonthlySalesEntity" Property="SalesAmount" Title="Sales Amount">
+            <Template Context="data">
+                @data.SalesAmount.ToString("c")
+            </Template>
+            </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="MonthlySalesEntity" Property="CampaignKey" Visible="false" Title="Campaign ID" />
+        <RadzenDataGridColumn TItem="MonthlySalesEntity" Property="StoreSalesRepresentativeKey" Title="Rep ID" Visible="false"/>
+        <RadzenDataGridColumn TItem="MonthlySalesEntity" Property="ErrorObject.Message" Title="Error" Visible="false"/>
+    </Columns>
+</RadzenDataGrid>
+@code {
+    private MonthlySalesReportEntity PageModel = new();
+    protected override void OnInitialized()
+    {
+        ReloadModel();
+    }
+    private void ReloadModel()
+    {
+        PageModel = MCON451.Data.Code.MonthlySalesFormFactory.GetReportData(60);
+    }
+}
