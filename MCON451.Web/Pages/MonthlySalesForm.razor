@@ -56,6 +56,11 @@
     {
         PageModel = MCON451.Data.Code.MonthlySalesFormFactory.GetFormData(!string.IsNullOrEmpty(MonthlySalesKey) ? Convert.ToInt32(MonthlySalesKey) : 0);
     }
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        ReloadModel();
+    }
     private void SaveSales()
     {
         string pageMessage;
