@@ -1,3 +1,4 @@
+using MCON451.Data;
 using MCON451.Web.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddScoped<ICookieFactory, CookieFactory>();
 builder.Services.AddRadzenComponents();
 var app = builder.Build();
 

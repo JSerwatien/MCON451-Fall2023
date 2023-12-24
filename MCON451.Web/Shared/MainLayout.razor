@@ -1,6 +1,10 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="page">
+    <Radzen.Blazor.RadzenDialog />
+    <RadzenNotification />
+    @if (AppState.CurrentUser != null && AppState.CurrentUser.UserProfileKey>0)
+    {
     <div>
         <NavMenu />
     </div>
@@ -29,7 +33,10 @@
                         <li class="mt-2">
                             <a class="github-button" href="https://github.com/creativetimofficial/material-dashboard" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star creativetimofficial/material-dashboard on GitHub">Star</a>
                         </li>*@
-                        <H3><center>Welcome back, Josh Serwatien</center></H3>
+                        @if(AppState.CurrentUser!=null)
+                        {
+                        <H3><center>Welcome back, @AppState.CurrentUser.DisplayName</center></H3>
+                        }
                         <li class="nav-item d-xl-none ps-3 d-flex align-items-center" style="float:right">
                             <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
                                 <div class="sidenav-toggler-inner">
@@ -165,4 +172,10 @@
             </footer>
         </div>
     </main>
+    }
 </div>
+@code
+{
+    [CascadingParameter]
+    public CascadingAppState AppState { get; set; }
+}
