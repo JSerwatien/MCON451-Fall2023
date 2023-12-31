@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavManager
 @inject IJSRuntime JsRuntime
+@inject Radzen.DialogService dialogService
 
 <div class="page">
     <Radzen.Blazor.RadzenDialog />
@@ -71,7 +72,7 @@
                             <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Profile Pages</h6>
                         </li>
                         <li class="nav-item">
-                            <a class="@GetLinkActiveClass("/Profile")" href="../pages/profile.html">
+                            <a class="@GetLinkActiveClass("/Profile")" href="javascript: void(0)" onclick="@(() => ShowProfileDialog())">
                                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                                     <i class="material-icons opacity-10">person</i>
                                 </div>
@@ -221,7 +222,7 @@
                         </li>*@
 @*                        *@
                         <li class="nav-item d-flex align-items-center">
-                            <a href="../pages/sign-in.html" class="nav-link text-body font-weight-bold px-0">
+                                <a href="javascript: void(0)" onclick="@(() => ShowProfileDialog())" class="nav-link text-body font-weight-bold px-0">
                                 <i class="fa fa-user me-sm-1"></i>
                                 <span class="d-sm-inline d-none">User Profile</span>
                             </a>
@@ -286,5 +287,59 @@
     private async void LogOut()
     {
         await JsRuntime.InvokeAsync<string>("Cookies.deleteCookie", UserCookieName);
+    }
+    private async Task ShowProfileDialog()
+    {
+        var result = await dialogService.OpenAsync("Profile", ds =>
+    @<RadzenStack Gap="1.5rem">
+        <section class="vh-1500" style="background-color: #eee;">
+            <div class="container py-5 h-1500">
+                <div class="row d-flex justify-content-center align-items-center h-1500">
+                    <div class="col-md-12 col-xl-12">
+
+                        <div class="card" style="border-radius: 15px;">
+                            <div class="card-body text-center">
+                                <div class="mt-3 mb-4">
+                                    <img src="/assets/img/tesla-model-s.png"
+                                         class="rounded-circle img-fluid" style="width: 100px;" />
+                                </div>
+                                <h4 class="mb-2">@AppState.CurrentUser.DisplayName</h4>
+                                <p class="text-muted mb-4">
+                                    @AppState.CurrentUser.Department <span class="mx-2">|</span> <a href="mailto:@AppState.CurrentUser.EmailAddress">@AppState.CurrentUser.EmailAddress</a>
+                                </p>
+                                <div class="mb-4 pb-2">
+                                    <button type="button" class="btn btn-outline-primary btn-floating">
+                                        <i class="fab fa-facebook-f fa-lg"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary btn-floating">
+                                        <i class="fab fa-twitter fa-lg"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary btn-floating">
+                                        <i class="fab fa-skype fa-lg"></i>
+                                    </button>
+                                </div>
+                                <RadzenButton Click=@(args => dialogService.Close()) Text="Close" Icon="close" class="btn btn-primary btn-rounded btn-lg" />
+                                <div class="d-flex justify-content-between text-center mt-5 mb-2">
+                                    <div>
+                                        <p class="mb-2 h5">@AppState.CurrentUser.UserProfileKey</p>
+                                        <p class="text-muted mb-0">User ID</p>
+                                    </div>
+                                    <div class="px-3">
+                                        <p class="mb-2 h5">@AppState.CurrentUser.DepartmentKey</p>
+                                        <p class="text-muted mb-0">Department ID</p>
+                                    </div>
+                                    <div>
+                                        <p class="mb-2 h5">@AppState.CurrentUser.LastRefreshed</p>
+                                        <p class="text-muted mb-0">Last Refreshed</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </RadzenStack>);
     }
 }
