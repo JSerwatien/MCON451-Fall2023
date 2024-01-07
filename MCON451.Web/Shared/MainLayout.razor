@@ -4,7 +4,7 @@
 @inject Radzen.DialogService dialogService
 
 <div class="page">
-    <Radzen.Blazor.RadzenDialog />
+    <RadzenDialog />
     <RadzenNotification />
     @if (AppState.CurrentUser != null && AppState.CurrentUser.UserProfileKey>0)
     {
@@ -45,11 +45,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="@GetLinkActiveClass("/Charts")" href="../pages/virtual-reality.html">
+                            <a class="@GetLinkActiveClass("/Schedule")" href="/Schedule">
                                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                                     <i class="material-icons opacity-10">view_in_ar</i>
                                 </div>
-                                <span class="nav-link-text ms-1">Charts</span>
+                                <span class="nav-link-text ms-1">Schedule</span>
                             </a>
                         </li>
                         @*           <li class="nav-item">

@@ -1,0 +1,92 @@
+﻿@page "/Schedule"
+@using MCON451.Data.Code;
+@using MCON451.Entity;
+@inject NavigationManager NavManager
+@if (!string.IsNullOrEmpty(PageMessage))
+{
+    <div class="alert alert-success" role="alert" style="color:white">
+        @((MarkupString)PageMessage)
+    </div>
+    <br />
+}
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert" style="color:white">
+        @((MarkupString)ErrorMessage)
+    </div>
+    <br />
+}
+<RadzenScheduler @ref=@PageModel SlotRender=@OnSlotRender TItem="Radzen.Blazor.AppointmentData" Data=@AppointmentList StartProperty="Start" EndProperty="End"
+                 TextProperty="Text" SelectedIndex="2" AppointmentSelect=@OnAppointmentSelect AppointmentRender="OnAppointmentRender">
+    <RadzenDayView />
+    <RadzenWeekView />
+    <RadzenMonthView />
+    <RadzenYearView />
+</RadzenScheduler>
+@code {
+    [CascadingParameter]
+    public CascadingAppState AppState { get; set; }
+    private string PageMessage = string.Empty;
+    private string ErrorMessage = string.Empty;
+    private RadzenScheduler<Radzen.Blazor.AppointmentData> PageModel = new();
+    private IList<Radzen.Blazor.AppointmentData> AppointmentList = new List<Radzen.Blazor.AppointmentData>();
+    protected override void OnInitialized()
+    {
+        ReloadModel();
+    }
+    private void ReloadModel()
+    {
+        try
+        {
+            List < StringIntDoubleDateEntity> scheduleData = new();
+            scheduleData = ScheduleFactory.GetScheduleData(AppState.CurrentUser);
+            AppointmentList = new List<Radzen.Blazor.AppointmentData>();
+            foreach (StringIntDoubleDateEntity newItem in scheduleData)
+            {
+                AppointmentList.Add(new AppointmentData { Data = newItem.IntValue, Start = Convert.ToDateTime(newItem.DateValue.ToString("yyyy-MM-dd 00:00:00")), End = Convert.ToDateTime(newItem.DateValue.ToString("yyyy-MM-dd 23:59:59")), Text = newItem.StringValue });
+            }
+        }
+
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+    private void OnSlotRender(SchedulerSlotRenderEventArgs args)
+    {
+        // Highlight today in month view
+        if (args.View.Text == "Month" && args.Start.Date == DateTime.Today)
+        {
+            args.Attributes["style"] = "background: green;";
+        }
+
+        // Highlight working hours (9-18)
+        if ((args.View.Text == "Week" || args.View.Text == "Day") && args.Start.Hour > 8 && args.Start.Hour < 19)
+        {
+            args.Attributes["style"] = "background: rgba(255,220,40,.2);";
+        }
+    }
+    private void OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<AppointmentData> args)
+    {
+        NavManager.NavigateTo("/MonthlySalesForm/" + args.Data.Data);
+    }
+    private void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<AppointmentData> args)
+    {
+
+        if (args.Data.Start.Date < DateTime.Now.Date)
+        {
+            args.Attributes["style"] = "background: red; font-weight: bold";
+        }
+        else if (args.Data.Start.Date > DateTime.Now.Date && args.Data.Start.Date < DateTime.Now.Date.AddDays(5))
+        {
+            args.Attributes["style"] = "background: yellow; color: black; font-weight: bold";
+
+        }
+        else
+        {
+            args.Attributes["style"] = "font-weight: bold";
+        }
+
+
+    }
+}
