@@ -228,6 +228,7 @@
     <None Include="BlankTemplate\LICENSE.md" />
     <None Include="BlankTemplate\package.json" />
     <None Include="BlankTemplate\README.md" />
+    <None Include="Database\MCON451.bak" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="BlankTemplate\assets\css\material-dashboard.css" />
