@@ -352,6 +352,7 @@
     <Content Include="BlankTemplate\template.html" />
     <Content Include="Notes.txt" />
     <Content Include="Scripts.sql" />
+    <Content Include="Video\Intro_MCON451.mp4" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
